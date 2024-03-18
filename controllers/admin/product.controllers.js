@@ -150,9 +150,9 @@ module.exports.createPost = async(req, res) => {
         req.body.position = parseInt(req.body.position);
     }
 
-    if(req.file && req.file.filename){
-        req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
+    // if(req.file && req.file.filename){
+    //     req.body.thumbnail = `/uploads/${req.file.filename}`;
+    // }
     const product = new Product(req.body); //tạo mới 1 sản phẩm
     await product.save(); // lưu vào database
     req.flash("Success","Thêm mới sản phẩm thành công");
