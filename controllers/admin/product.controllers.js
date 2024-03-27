@@ -1,7 +1,10 @@
 const Product = require("../../models/product.model");
+const ProductCategory = require("../../models/product-category.model")
 const filterStatusHelper = require("../../helpers/filterState.helper");
 const paginationHelper = require("../../helpers/pagination.helper")
 const systemCongif = require("../../config/system")
+const createTreeHelper = require("../../helpers/create-tree.helper")
+
 
 // [GET] /admin/products/
 module.exports.index = async (req, res) =>{
@@ -139,8 +142,15 @@ module.exports.deleteItem = async (req, res) => {
 
 //[GET] //admin/products/create
 module.exports.create = async(req, res) => {
+    const records = await ProductCategory.find({
+        deleted: false,
+    });
+
+    const newRecords= createTreeHelper(records);
+
     res.render("admin/pages/products/create", {
         pageTitle: "thêm mới sản phẩm",
+        records: newRecords,
     });
 }
 
@@ -175,10 +185,16 @@ module.exports.edit = async (req, res) => {
             deleted: false
         });
         
+        const records = await ProductCategory.find({
+            deleted: false,
+        });
+    
+        const newRecords= createTreeHelper(records);
         
         res.render(`admin/pages/products/edit.pug`,{
            pageTitle: "chỉnh sửa sản phẩm",
-           product: product 
+           product: product,
+           records: newRecords,
         });
     } catch (error) {
         res.redirect(`/${systemCongif.prefixAdmin}/products`);
@@ -189,8 +205,6 @@ module.exports.edit = async (req, res) => {
 module.exports.editPatch = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id);
-        console.log(req.body);
         req.body.price = parseInt(req.body.price);
         req.body.discountPercentage = parseInt(req.body.discountPercentage);
         req.body.stock = parseInt(req.body.stock);
